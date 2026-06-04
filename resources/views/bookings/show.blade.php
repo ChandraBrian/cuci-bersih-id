@@ -200,13 +200,13 @@
                                         $nextStatuses = ['QUEUE', 'CANCELLED'];
                                         break;
                                     case 'QUEUE':
-                                        $nextStatuses = ['WASHING', 'CANCELLED'];
+                                        $nextStatuses = ['WASHING'];
                                         break;
                                     case 'WASHING':
-                                        $nextStatuses = ['QUALITY_CHECK', 'CANCELLED'];
+                                        $nextStatuses = ['QUALITY_CHECK'];
                                         break;
                                     case 'QUALITY_CHECK':
-                                        $nextStatuses = ['COMPLETED', 'CANCELLED'];
+                                        $nextStatuses = ['COMPLETED'];
                                         break;
                                     case 'COMPLETED':
                                         $nextStatuses = ['PICKED_UP'];
@@ -221,7 +221,7 @@
                                         <form method="POST" action="{{ route('bookings.transition', $booking) }}">
                                             @csrf
                                             @method('PATCH')
-                                            <input type="hidden" name="new_status" value="{{ $next }}">
+                                            <input type="hidden" name="status" value="{{ $next }}">
                                             
                                             @if($next === 'CANCELLED')
                                                 <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 border border-red-300 dark:border-red-700 text-xs font-semibold text-red-700 dark:text-red-400 bg-white dark:bg-gray-800 rounded-md hover:bg-red-50 dark:hover:bg-red-950/20 transition">

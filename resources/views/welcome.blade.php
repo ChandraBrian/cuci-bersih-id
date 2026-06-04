@@ -103,68 +103,46 @@
                         <p class="text-base text-slate-500 dark:text-slate-400 max-w-xl mx-auto">Choose the perfect treatment package for your ride.</p>
                     </div>
 
-                    <!-- Services list (static cards matching our seeders) -->
+                    <!-- Services list (dynamic from database) -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        
-                        <!-- Card 1 -->
-                        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm flex flex-col justify-between hover:shadow-md transition">
-                            <div class="space-y-4">
-                                <div class="w-12 h-12 bg-indigo-50 dark:bg-indigo-950/50 rounded-2xl flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                </div>
-                                <h3 class="text-lg font-bold text-slate-950 dark:text-white">Cuci Motor Reguler</h3>
-                                <p class="text-xs text-slate-500 dark:text-slate-400">Basic washing and foam treatment for any typical motorcycle.</p>
-                            </div>
-                            <div class="mt-6 pt-4 border-t border-slate-50 dark:border-slate-800/50 flex justify-between items-center">
-                                <span class="text-lg font-extrabold text-slate-900 dark:text-white">Rp 20.000</span>
-                                <span class="text-xs text-slate-400 font-semibold">30 mins</span>
-                            </div>
-                        </div>
+                        @php
+                            $colors = [
+                                ['bg' => 'bg-indigo-50 dark:bg-indigo-950/50', 'text' => 'text-indigo-600 dark:text-indigo-400'],
+                                ['bg' => 'bg-purple-50 dark:bg-purple-950/50', 'text' => 'text-purple-600 dark:text-purple-400'],
+                                ['bg' => 'bg-emerald-50 dark:bg-emerald-950/50', 'text' => 'text-emerald-600 dark:text-emerald-400'],
+                                ['bg' => 'bg-amber-50 dark:bg-amber-950/50', 'text' => 'text-amber-600 dark:text-amber-400'],
+                            ];
+                            $icons = [
+                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>',
+                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>',
+                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>',
+                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>',
+                            ];
+                        @endphp
 
-                        <!-- Card 2 -->
-                        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm flex flex-col justify-between hover:shadow-md transition">
-                            <div class="space-y-4">
-                                <div class="w-12 h-12 bg-purple-50 dark:bg-purple-950/50 rounded-2xl flex items-center justify-center text-purple-600 dark:text-purple-400">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                        @forelse($services as $index => $service)
+                            @php
+                                $color = $colors[$index % count($colors)];
+                                $icon = $icons[$index % count($icons)];
+                            @endphp
+                            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+                                <div class="space-y-4">
+                                    <div class="w-12 h-12 {{ $color['bg'] }} rounded-2xl flex items-center justify-center {{ $color['text'] }}">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">{!! $icon !!}</svg>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-slate-950 dark:text-white">{{ $service->name }}</h3>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">{{ $service->description ?? 'Professional wash service.' }}</p>
                                 </div>
-                                <h3 class="text-lg font-bold text-slate-950 dark:text-white">Cuci Motor Premium</h3>
-                                <p class="text-xs text-slate-500 dark:text-slate-400">Foam wash + complete body wax and tire polish finishing.</p>
-                            </div>
-                            <div class="mt-6 pt-4 border-t border-slate-50 dark:border-slate-800/50 flex justify-between items-center">
-                                <span class="text-lg font-extrabold text-slate-900 dark:text-white">Rp 45.000</span>
-                                <span class="text-xs text-slate-400 font-semibold">45 mins</span>
-                            </div>
-                        </div>
-
-                        <!-- Card 3 -->
-                        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm flex flex-col justify-between hover:shadow-md transition">
-                            <div class="space-y-4">
-                                <div class="w-12 h-12 bg-emerald-50 dark:bg-emerald-950/50 rounded-2xl flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                <div class="mt-6 pt-4 border-t border-slate-50 dark:border-slate-800/50 flex justify-between items-center">
+                                    <span class="text-lg font-extrabold text-slate-900 dark:text-white">Rp {{ number_format($service->price, 0, ',', '.') }}</span>
+                                    <span class="text-xs text-slate-400 font-semibold">{{ $service->duration_estimate }} mins</span>
                                 </div>
-                                <h3 class="text-lg font-bold text-slate-950 dark:text-white">Cuci Mobil Reguler</h3>
-                                <p class="text-xs text-slate-500 dark:text-slate-400">Full exterior wash, undercarriage wash, and basic interior vacuuming.</p>
                             </div>
-                            <div class="mt-6 pt-4 border-t border-slate-50 dark:border-slate-800/50 flex justify-between items-center">
-                                <span class="text-lg font-extrabold text-slate-900 dark:text-white">Rp 60.000</span>
-                                <span class="text-xs text-slate-400 font-semibold">60 mins</span>
+                        @empty
+                            <div class="col-span-full text-center py-12 text-slate-400">
+                                <p>No services available yet.</p>
                             </div>
-                        </div>
-
-                        <!-- Card 4 -->
-                        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm flex flex-col justify-between hover:shadow-md transition">
-                            <div class="space-y-4">
-                                <div class="w-12 h-12 bg-amber-50 dark:bg-amber-950/50 rounded-2xl flex items-center justify-center text-amber-600 dark:text-amber-400">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                                </div>
-                                <h3 class="text-lg font-bold text-slate-950 dark:text-white">Cuci Mobil Premium</h3>
-                                <p class="text-xs text-slate-500 dark:text-slate-400">Snow wash + engine bay detail + complete interior deep-clean & wax protection.</p>
-                            </div>
-                            <div class="mt-6 pt-4 border-t border-slate-50 dark:border-slate-800/50 flex justify-between items-center">
-                                <span class="text-lg font-extrabold text-slate-900 dark:text-white">Rp 120.000</span>
-                                <span class="text-xs text-slate-400 font-semibold">90 mins</span>
-                            </div>
-                        </div>
+                        @endforelse
 
                     </div>
                 </div>

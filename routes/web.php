@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $services = \App\Models\Service::where('is_active', true)->get();
+    return view('welcome', compact('services'));
 });
 
 // Public booking tracking (customer can track by booking code)
