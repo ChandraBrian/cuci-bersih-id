@@ -38,36 +38,39 @@ Route::get('/tracking/search', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Dashboard — redirect to bookings index
-    Route::get('/dashboard', [BookingController::class, 'index'])->name('dashboard');
-
     // Profile (Laravel Breeze default)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    /*
-    |----------------------------------------------------------------------
-    | Booking Management
-    |----------------------------------------------------------------------
-    */
-    Route::prefix('bookings')->name('bookings.')->group(function () {
-        Route::get('/', [BookingController::class, 'index'])->name('index');
-        Route::get('/create', [BookingController::class, 'create'])->name('create');
-        Route::post('/', [BookingController::class, 'store'])->name('store');
-        Route::get('/{booking}', [BookingController::class, 'show'])->name('show');
-        Route::patch('/{booking}/transition', [BookingController::class, 'transition'])->name('transition');
-    });
+    // Admin & Staff Only Routes
+    Route::middleware('role:admin,staff')->group(function () {
+        // Dashboard — redirect to bookings index
+        Route::get('/dashboard', [BookingController::class, 'index'])->name('dashboard');
 
-    /*
-    |----------------------------------------------------------------------
-    | Payment Management
-    |----------------------------------------------------------------------
-    */
-    Route::prefix('payments')->name('payments.')->group(function () {
-        Route::get('/{booking}/create', [PaymentController::class, 'create'])->name('create');
-        Route::post('/{booking}', [PaymentController::class, 'store'])->name('store');
-        Route::patch('/{payment}/verify', [PaymentController::class, 'verify'])->name('verify');
+        /*
+        |----------------------------------------------------------------------
+        | Booking Management
+        |----------------------------------------------------------------------
+        */
+        Route::prefix('bookings')->name('bookings.')->group(function () {
+            Route::get('/', [BookingController::class, 'index'])->name('index');
+            Route::get('/create', [BookingController::class, 'create'])->name('create');
+            Route::post('/', [BookingController::class, 'store'])->name('store');
+            Route::get('/{booking}', [BookingController::class, 'show'])->name('show');
+            Route::patch('/{booking}/transition', [BookingController::class, 'transition'])->name('transition');
+        });
+
+        /*
+        |----------------------------------------------------------------------
+        | Payment Management
+        |----------------------------------------------------------------------
+        */
+        Route::prefix('payments')->name('payments.')->group(function () {
+            Route::get('/{booking}/create', [PaymentController::class, 'create'])->name('create');
+            Route::post('/{booking}', [PaymentController::class, 'store'])->name('store');
+            Route::patch('/{payment}/verify', [PaymentController::class, 'verify'])->name('verify');
+        });
     });
 
     /*
