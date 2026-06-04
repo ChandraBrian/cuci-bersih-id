@@ -78,9 +78,11 @@ class BookingStatusService
         // 3. Execute update and log insertion inside a database transaction
         return DB::transaction(function () use ($booking, $newStatus, $updatedBy) {
             // Update booking status
-            $booking->update([
-                'status' => $newStatus,
-            ]);
+            Booking::withoutStatusProtection(function () use ($booking, $newStatus) {
+                $booking->update([
+                    'status' => $newStatus,
+                ]);
+            });
 
             // Log status change
             $booking->statusLogs()->create([

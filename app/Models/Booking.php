@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\DirectBookingStatusModificationException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,13 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Booking extends Model
 {
     use HasFactory;
+
+    /**
+     * Flag to temporarily bypass status modification protection.
+     *
+     * @var bool
+     */
+    public static bool $allowStatusModification = false;
 
     /**
      * The attributes that are mass assignable.
@@ -30,6 +38,38 @@ class Booking extends Model
         'status',
         'notes',
     ];
+
+    /**
+     * Boot the model.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (Booking $booking) {
+            if ($booking->exists && $booking->isDirty('status') && !static::$allowStatusModification) {
+                throw new DirectBookingStatusModificationException(
+                    "Direct status update is not allowed. Use BookingStatusService."
+                );
+            }
+        });
+    }
+
+    /**
+     * Run a callback bypassing status modification protection.
+     *
+     * @param callable $callback
+     * @return mixed
+     */
+    public static function withoutStatusProtection(callable $callback): mixed
+    {
+        $original = static::$allowStatusModification;
+        static::$allowStatusModification = true;
+
+        try {
+            return $callback();
+        } finally {
+            static::$allowStatusModification = $original;
+        }
+    }
 
     /**
      * Get the attributes that should be cast.
